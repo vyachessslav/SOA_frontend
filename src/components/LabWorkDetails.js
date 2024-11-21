@@ -95,6 +95,53 @@ const LabWorkDetails = () => {
         }
     };
 
+    const handleIncreaseDifficulty = async (steps) => {
+        try {
+            const response = await fetch(`http://localhost:5678/bars/labwork/${id}/difficulty/increase/${steps}`, {
+                method: 'POST',
+            });
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            alert('Сложность успешно повышена!');
+            //Refetch labWork to update the UI
+            const updatedLabWorkResponse = await fetch(`http://localhost:8080/v1/labworks/${id}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            const updatedLabWork = await updatedLabWorkResponse.json();
+            setLabWork(updatedLabWork);
+
+        } catch (error) {
+            setError(error.message);
+        }
+    };
+
+    const handleDecreaseDifficulty = async (steps) => {
+        try {
+            const response = await fetch(`http://localhost:5678/bars/labwork/${id}/difficulty/decrease/${steps}`, {
+                method: 'POST',
+            });
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            alert('Сложность успешно понижена!');
+            //Refetch labWork to update the UI
+            const updatedLabWorkResponse = await fetch(`http://localhost:8080/v1/labworks/${id}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            const updatedLabWork = await updatedLabWorkResponse.json();
+            setLabWork(updatedLabWork);
+        } catch (error) {
+            setError(error.message);
+        }
+    };
+
     return (
         <div>
             <h1>Детали лабораторной работы</h1>
@@ -173,6 +220,12 @@ const LabWorkDetails = () => {
                     <button onClick={handleDeleteLabWork}>Удалить</button>
                 </div>
             )}
+            <div>
+                <button onClick={() => handleIncreaseDifficulty(1)}>Повысить сложность на 1</button>
+                <button onClick={() => handleIncreaseDifficulty(2)}>Повысить сложность на 2</button>
+                <button onClick={() => handleDecreaseDifficulty(1)}>Понизить сложность на 1</button>
+                <button onClick={() => handleDecreaseDifficulty(2)}>Понизить сложность на 2</button>
+            </div>
         </div>
     );
 };

@@ -42,6 +42,7 @@ const LabWorkList = () => {
                 }
                 const data = await response.json();
                 setLabWorks(data);
+                setError("");
             } catch (err) {
                 setError(err.message);
             }
@@ -146,21 +147,25 @@ const LabWorkList = () => {
     const handleCountAuthor = async (e) => {
         e.preventDefault();
         const authorName = e.target.authorName.value;
-        console.log(authorName);
-        try {
-            const response = await fetch(`http://localhost:8080/v1/labworks/${authorName}/count`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json'
+        if (authorName !== "") {
+            try {
+                const response = await fetch(`http://localhost:8080/v1/labworks/${authorName}/count`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
                 }
-            });
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+                const count = await response.json();
+                alert(`Количество работ автора ${authorName}: ${count}`);
+            } catch (error) {
+                alert('Ошибка: ' + error.message);
             }
-            const count = await response.json();
-            alert(`Количество работ автора ${authorName}: ${count}`);
-        } catch (error) {
-            alert('Ошибка: ' + error.message);
+        }
+        else {
+            alert(`Введите имя автора!`);
         }
     };
 
