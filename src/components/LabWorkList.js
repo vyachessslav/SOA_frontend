@@ -100,7 +100,63 @@ const LabWorkList = () => {
                 throw new Error(errorData.message || `Ошибка при добавлении: ${response.status}`);
             }
             alert('Лабораторная работа добавлена!');
-            //fetchLabworks(); //Update the list (consider more robust approach)
+        } catch (error) {
+            alert('Ошибка: ' + error.message);
+        }
+    };
+
+    const handleCalculateMinimalPointSum = async () => {
+        try {
+            const response = await fetch('http://localhost:8080/v1/labworks/minimal-point/sum', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const sum = await response.json();
+            alert(`Сумма minimalPoint: ${sum}`);
+        } catch (error) {
+            alert('Ошибка: ' + error.message);
+        }
+    };
+
+    const handleFindMinDifficulty = async () => {
+        try {
+            const response = await fetch('http://localhost:8080/v1/labworks/difficulty/min', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const labWork = await response.json();
+            alert(`Лабораторная работа с минимальной сложностью: ${JSON.stringify(labWork)}`);
+        } catch (error) {
+            alert('Ошибка: ' + error.message);
+        }
+    };
+
+    const handleCountAuthor = async (e) => {
+        e.preventDefault();
+        const authorName = e.target.authorName.value;
+        console.log(authorName);
+        try {
+            const response = await fetch(`http://localhost:8080/v1/labworks/${authorName}/count`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const count = await response.json();
+            alert(`Количество работ автора ${authorName}: ${count}`);
         } catch (error) {
             alert('Ошибка: ' + error.message);
         }
@@ -220,6 +276,17 @@ const LabWorkList = () => {
                     <input type="text" name="author.location.name" value={newLabWork.author.location.name} onChange={handleNewLabWorkChange} />
                 </label>
                 <button type="button" onClick={handleAddLabWork}>Добавить</button>
+            </form>
+
+            <h2>Дополнительные операции</h2>
+            <button onClick={handleCalculateMinimalPointSum}>Рассчитать сумму minimalPoint</button>
+            <button onClick={handleFindMinDifficulty}>Найти самую легкую лабу</button>
+            <form onSubmit={handleCountAuthor}>
+                <label>
+                    Имя автора:
+                    <input type="text" name="authorName" />
+                </label>
+                <button type="submit">Посчитать количество работ</button>
             </form>
         </div>
     );
