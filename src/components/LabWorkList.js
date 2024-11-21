@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from "react-router-dom";
+import '../styles/styles.css';
+
 
 const LabWorkList = () => {
     const [labWorks, setLabWorks] = useState([]);
@@ -181,11 +183,6 @@ const LabWorkList = () => {
                     <li className={`page-item ${currentPage === 0 ? 'disabled' : ''}`}>
                         <button className="page-link" onClick={() => handlePageChange(currentPage - 1)}>&lt;</button>
                     </li>
-                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                        <li key={page} className={`page-item ${page === currentPage + 1 ? 'active' : ''}`}>
-                            <button className="page-link" onClick={() => handlePageChange(page - 1)}>{page}</button>
-                        </li>
-                    ))}
                     <li className={`page-item ${currentPage === totalPages - 1 ? 'disabled' : ''}`}>
                         <button className="page-link" onClick={() => handlePageChange(currentPage + 1)}>&gt;</button>
                     </li>
