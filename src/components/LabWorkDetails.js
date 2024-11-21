@@ -1,20 +1,28 @@
 import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 
-const LabWorkDetails = ({ match }) => {
-    const { id } = match.params;
+
+const LabWorkDetails = () => {
+    const { id } = useParams();
     const [labWork, setLabWork] = useState(null);
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        fetch(`http://localhost:8080/labworks/${id}`, {mode: 'no-cors'})
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Ошибка сети');
-                }
-                return response.json();
-            })
-            .then(data => setLabWork(data))
-            .catch(error => setError(error.message));
+        const fetchLabworks = async () => {
+            try {
+                const response = await fetch(`http://localhost:8080/v1/labworks/${id}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                const data = await response.json();
+                setLabWork(data);
+            } catch (err) {
+                setError(err.message);
+            }
+        };
+        fetchLabworks();
     }, [id]);
 
     return (
@@ -23,7 +31,6 @@ const LabWorkDetails = ({ match }) => {
             {error && <div className="error">Ошибка: {error}</div>}
             {labWork && (
                 <div>
-                    <p><strong>ID:</strong> {labWork.id}</p>
                     <p><strong>Название:</strong> {labWork.name}</p>
                     <p><strong>Дата создания:</strong> {new Date(labWork.creationDate).toLocaleString()}</p>
                     <p><strong>Автор:</strong> {labWork.author.name}</p>
@@ -34,4 +41,3 @@ const LabWorkDetails = ({ match }) => {
 };
 
 export default LabWorkDetails;
-

@@ -1,23 +1,26 @@
-
 import React, { useState, useEffect } from 'react';
+import {Link} from "react-router-dom";
 
 const LabWorkList = () => {
     const [labWorks, setLabWorks] = useState([]);
     const [error, setError] = useState(null);
 
-    useEffect(async () => {
-        let response = await fetch('http://localhost:8080/v1/labworks', {
-            mode: 'no-cors',
-            method: 'get',
-            headers: {
-                'Content-Type': 'application/json'
+    useEffect(() => {
+        const fetchLabworks = async () => {
+            try {
+                const response = await fetch('http://localhost:8080/v1/labworks', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                const data = await response.json();
+                setLabWorks(data);
+            } catch (err) {
+                setError(err.message);
             }
-        })
-        try {
-            setLabWorks(await response.json());
-        } catch(error) {
-            setError(error.message);
-        }
+        };
+        fetchLabworks();
     }, []);
 
     return (
@@ -27,14 +30,18 @@ const LabWorkList = () => {
             <table>
                 <thead>
                 <tr>
+                    <th>ID</th>
                     <th>Название</th>
+                    <th>Дата создания</th>
                     <th>Автор</th>
                 </tr>
                 </thead>
                 <tbody>
                 {labWorks.map(labWork => (
                     <tr>
+                        <td><Link to={`/labworks/${labWork.id}`}>{labWork.id}</Link></td>
                         <td>{labWork.name}</td>
+                        <td>{new Date(labWork.creationDate).toLocaleString()}</td>
                         <td>{labWork.author.name}</td>
                     </tr>
                 ))}
@@ -45,4 +52,3 @@ const LabWorkList = () => {
 };
 
 export default LabWorkList;
-
