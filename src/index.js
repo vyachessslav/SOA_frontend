@@ -3,6 +3,10 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
+const firstServiceUrl = 'https://localhost:5378/v1';
+const secondServiceUrl = 'https://localhost:5278/lab02_bars_sevice_Web/api/v1/bars';
+export { firstServiceUrl, secondServiceUrl };
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from "react-router-dom";
 import '../styles/styles.css';
+import { firstServiceUrl } from '../index.js';
 
 
 const LabWorkList = () => {
@@ -27,7 +28,7 @@ const LabWorkList = () => {
     useEffect(() => {
         const fetchLabworks = async () => {
             try {
-                let url = `http://localhost:8080/v1/labworks?pageNumber=${currentPage}&pageSize=${pageSize}`;
+                let url = `${firstServiceUrl}/labworks?pageNumber=${currentPage}&pageSize=${pageSize}`;
                 if (sort) url += `&sort=${sort}`;
                 if (filter) url += `&filter=${filter}`;
 
@@ -72,6 +73,9 @@ const LabWorkList = () => {
         setNewLabWork((prev) => {
             if(name === "author.birthday"){
                 return {...prev, author: {...prev.author, birthday: value}};
+            }
+            else if(name === "author.location.name"){
+                return {...prev, author: {...prev.author, location: {...prev.author.location, [name.split(".")[2]]: value}}};
             } else if(name.startsWith("coordinates.")){
                 const [key] = name.split(".");
                 return {...prev, coordinates: {...prev.coordinates, [name.split(".")[1]]: parseFloat(value)}};
@@ -91,7 +95,7 @@ const LabWorkList = () => {
 
     const handleAddLabWork = async () => {
         try {
-            const response = await fetch('http://localhost:8080/v1/labworks', {
+            const response = await fetch(`${firstServiceUrl}/labworks`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -110,7 +114,7 @@ const LabWorkList = () => {
 
     const handleCalculateMinimalPointSum = async () => {
         try {
-            const response = await fetch('http://localhost:8080/v1/labworks/minimal-point/sum', {
+            const response = await fetch(`${firstServiceUrl}/labworks/minimal-point/sum`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
@@ -128,7 +132,7 @@ const LabWorkList = () => {
 
     const handleFindMinDifficulty = async () => {
         try {
-            const response = await fetch('http://localhost:8080/v1/labworks/difficulty/min', {
+            const response = await fetch(`${firstServiceUrl}/labworks/difficulty/min`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
@@ -149,7 +153,7 @@ const LabWorkList = () => {
         const authorName = e.target.authorName.value;
         if (authorName !== "") {
             try {
-                const response = await fetch(`http://localhost:8080/v1/labworks/${authorName}/count`, {
+                const response = await fetch(`${firstServiceUrl}/labworks/${authorName}/count`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json'

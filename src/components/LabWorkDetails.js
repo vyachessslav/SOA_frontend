@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import '../styles/styles.css';
+import { firstServiceUrl, secondServiceUrl } from '../index.js';
 
 
 const LabWorkDetails = () => {
@@ -14,7 +15,7 @@ const LabWorkDetails = () => {
     useEffect(() => {
         const fetchLabwork = async () => {
             try {
-                const response = await fetch(`http://localhost:8080/v1/labworks/${id}`, {
+                const response = await fetch(`${firstServiceUrl}/labworks/${id}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json'
@@ -61,7 +62,7 @@ const LabWorkDetails = () => {
     const handleUpdateLabWork = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch(`http://localhost:8080/v1/labworks/${id}`, {
+            const response = await fetch(`${firstServiceUrl}/labworks/${id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -81,7 +82,7 @@ const LabWorkDetails = () => {
     const handleDeleteLabWork = async () => {
         if (window.confirm('Вы действительно хотите удалить эту лабораторную работу?')) {
             try {
-                const response = await fetch(`http://localhost:8080/v1/labworks/${id}`, {
+                const response = await fetch(`${firstServiceUrl}/labworks/${id}`, {
                     method: 'DELETE',
                 });
                 if (!response.ok) {
@@ -97,23 +98,30 @@ const LabWorkDetails = () => {
 
     const handleIncreaseDifficulty = async (steps) => {
         try {
-            const response = await fetch(`http://localhost:5678/bars/labwork/${id}/difficulty/increase/${steps}`, {
+            const response = await fetch(`${secondServiceUrl}/labwork/${id}/difficulty/increase/${steps}`, {
                 method: 'POST',
             });
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            alert('Сложность успешно повышена!');
-            //Refetch labWork to update the UI
-            const updatedLabWorkResponse = await fetch(`http://localhost:8080/v1/labworks/${id}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json'
+                if (response.status === 400) {
+                    const json = await response.json();
+                    alert(json['message']);
                 }
-            });
-            const updatedLabWork = await updatedLabWorkResponse.json();
-            setLabWork(updatedLabWork);
-
+                else {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+            }
+            else {
+                alert('Сложность успешно повышена!');
+                //Refetch labWork to update the UI
+                const updatedLabWorkResponse = await fetch(`${firstServiceUrl}/labworks/${id}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                const updatedLabWork = await updatedLabWorkResponse.json();
+                setLabWork(updatedLabWork);
+            }
         } catch (error) {
             setError(error.message);
         }
@@ -121,22 +129,30 @@ const LabWorkDetails = () => {
 
     const handleDecreaseDifficulty = async (steps) => {
         try {
-            const response = await fetch(`http://localhost:5678/bars/labwork/${id}/difficulty/decrease/${steps}`, {
+            const response = await fetch(`${secondServiceUrl}/labwork/${id}/difficulty/decrease/${steps}`, {
                 method: 'POST',
             });
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            alert('Сложность успешно понижена!');
-            //Refetch labWork to update the UI
-            const updatedLabWorkResponse = await fetch(`http://localhost:8080/v1/labworks/${id}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json'
+                if (response.status === 400) {
+                    const json = await response.json();
+                    alert(json['message']);
                 }
-            });
-            const updatedLabWork = await updatedLabWorkResponse.json();
-            setLabWork(updatedLabWork);
+                else {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+            }
+            else {
+                alert('Сложность успешно понижена!');
+                //Refetch labWork to update the UI
+                const updatedLabWorkResponse = await fetch(`${firstServiceUrl}/labworks/${id}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                const updatedLabWork = await updatedLabWorkResponse.json();
+                setLabWork(updatedLabWork);
+            }
         } catch (error) {
             setError(error.message);
         }
