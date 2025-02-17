@@ -5,7 +5,8 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
 const App = () => {
   return (
-      <Router basename="/~s335115/SOA2">
+      //<Router basename="/~s335115/SOA2">
+      <Router basename="">
         <div className="App">
           <Routes>
             <Route path="/" element={<LabWorkList />} />
